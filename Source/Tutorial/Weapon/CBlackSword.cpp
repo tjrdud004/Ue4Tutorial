@@ -4,6 +4,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine.h"
 #include "Enemy/CEnemy.h"
+#include "Engine/Classes/Particles/ParticleSystemComponent.h"
 
 
 ACBlackSword::ACBlackSword()
@@ -25,6 +26,15 @@ ACBlackSword::ACBlackSword()
 
 	Capsule->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
+	BaseParticle = CreateDefaultSubobject<UParticleSystemComponent>(L"BaseParticle");
+
+
+	path = L"ParticleSystem'/Game/InfinityBladeEffects/Effects/FX_Ability/Defense/P_Shield_Spawn.P_Shield_Spawn'";
+
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> baseParticle(*path);
+	if (baseParticle.Succeeded())
+		BaseParticle->SetTemplate(baseParticle.Object);
+
 }
 
 void ACBlackSword::Tick(float DeltaTime)
@@ -44,5 +54,9 @@ void ACBlackSword::OnBeginOverlap(UPrimitiveComponent * OverlappedComponent, AAc
 {
 	ACEnemy* enemy = Cast<ACEnemy>(OtherActor);
 	if (enemy != NULL)
+	{
 		UGameplayStatics::ApplyDamage(OtherActor, Damage ,NULL,GetOwner(),NULL);
+		BaseParticle->ActivateSystem();
+		
+	}
 }

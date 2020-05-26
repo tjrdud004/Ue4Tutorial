@@ -17,6 +17,9 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 		float Damage = 20.f;
 
+	UPROPERTY(EditAnywhere)
+		class UParticleSystemComponent* BaseParticle;
+
 public:
 	ACBlackSword();
 
@@ -26,8 +29,12 @@ protected:
 
 	virtual void BeginPlay() override;
 
+
+
 private:
 	UFUNCTION()
 		void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+private:
 
 };

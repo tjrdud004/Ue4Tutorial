@@ -17,7 +17,12 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 		float Health = 100.f;
 
+private:
+	//UPROPERTY(VisibleDefaultsOnly)
+	//	class UParticleSystemComponent* Particle;
 
+	UPROPERTY(VisibleDefaultsOnly)
+		class UParticleSystem* Particle;
 
 public:
 

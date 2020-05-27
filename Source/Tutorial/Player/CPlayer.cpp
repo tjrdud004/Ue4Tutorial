@@ -2,7 +2,6 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/InputComponent.h"
 #include "ConstructorHelpers.h"
-#include "Weapon/CWeapon.h"
 #include "Engine/World.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
@@ -11,9 +10,11 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
-
-#include "Enemy/CEnemy.h"
 #include "Engine.h"
+
+#include "Weapon/CWeapon.h"
+#include "Enemy/CEnemy.h"
+#include "Camera/CSkillCameraShake.h"
 
 ACPlayer::ACPlayer()
 {
@@ -524,7 +525,7 @@ void ACPlayer::OnSkillBurst()
 
 	FWeaponDesc& desc = GetCurWeaponDesc();
 	PlayAnimMontage(desc.SkillMontages[(int)ESkillType::Burst], 1.3f);
-
+	
 }
 
 void ACPlayer::Sheathed()
@@ -614,6 +615,9 @@ float ACPlayer::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent,
 	float damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	PlayAnimMontage(HittedMontage);
+
+	APlayerCameraManager* camManager = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
+	camManager->PlayCameraShake(UCSkillCameraShake::StaticClass(), 0.2f);
 
 	return 0.0f;
 }

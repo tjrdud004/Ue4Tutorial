@@ -17,9 +17,6 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 		float Damage = 20.f;
 
-	UPROPERTY(EditAnywhere)
-		class UParticleSystemComponent* BaseParticle;
-
 public:
 	ACBlackSword();
 

@@ -26,14 +26,7 @@ ACBlackSword::ACBlackSword()
 
 	Capsule->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	BaseParticle = CreateDefaultSubobject<UParticleSystemComponent>(L"BaseParticle");
-
-
-	path = L"ParticleSystem'/Game/InfinityBladeEffects/Effects/FX_Ability/Defense/P_Shield_Spawn.P_Shield_Spawn'";
-
-	static ConstructorHelpers::FObjectFinder<UParticleSystem> baseParticle(*path);
-	if (baseParticle.Succeeded())
-		BaseParticle->SetTemplate(baseParticle.Object);
+	
 
 }
 
@@ -56,7 +49,6 @@ void ACBlackSword::OnBeginOverlap(UPrimitiveComponent * OverlappedComponent, AAc
 	if (enemy != NULL)
 	{
 		UGameplayStatics::ApplyDamage(OtherActor, Damage ,NULL,GetOwner(),NULL);
-		BaseParticle->ActivateSystem();
-		
+
 	}
 }

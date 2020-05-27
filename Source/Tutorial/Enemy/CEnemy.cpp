@@ -5,7 +5,11 @@
 #include "Engine/World.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "TimerManager.h"
+#include "Particles/ParticleSystem.h"	
+#include "Kismet/GameplayStatics.h"
+
 
 ACEnemy::ACEnemy()
 {
@@ -26,6 +30,11 @@ ACEnemy::ACEnemy()
 	ConstructorHelpers::FObjectFinder<UAnimMontage> hitted(*path);
 	if (hitted.Succeeded())
 		HittedMontage = hitted.Object;
+
+	path = L"ParticleSystem'/Game/InfinityBladeEffects/Effects/FX_Combat_Ice/Impact/P_Impact_Ice.P_Impact_Ice'";
+	ConstructorHelpers::FObjectFinder<UParticleSystem> particle(*path);
+	if (particle.Succeeded())
+		Particle = particle.Object;
 
 }
 
@@ -69,6 +78,9 @@ float ACEnemy::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, 
 	float damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	Health -= damage;
+	UGameplayStatics::SpawnEmitterAttached(Particle,GetMesh(),"spine_01",
+		FVector(0,0,0),FRotator(0,0,0),EAttachLocation::KeepRelativeOffset,true);
+
 
 	if (Health > 0.f)
 	{
@@ -84,12 +96,14 @@ float ACEnemy::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, 
 		GetMesh()->SetSimulatePhysics(true);
 		GetMesh()->AddImpulse(forward * GetMesh()->GetMass() * 1000.f);
 		GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		//죽으면 충돌 못지나가게끔하는것.
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		
+
 		bCanMove = false;
 		bDead = true;
 
 		GetWorldTimerManager().SetTimer(DeadTimerHandle, this, &ACEnemy::Death, 3.f, false);
-		
 	}
 
 	return damage;

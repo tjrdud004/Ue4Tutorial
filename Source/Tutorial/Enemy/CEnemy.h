@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "CBaseCharacter.h"
 #include "CEnemy.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnEndAttackDelegate)
 
 
 UCLASS()
-class TUTORIAL_API ACEnemy : public ACharacter
+class TUTORIAL_API ACEnemy : public ACBaseCharacter
 {
 	GENERATED_BODY()
 protected:
@@ -37,6 +37,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
+
 public:
 	void BeginAttack();
 	void EndAttack();
@@ -46,8 +47,12 @@ public:
 	void HittedEnd();
 
 	FORCEINLINE class AActor* GetWeapon() { return BlackBlade; }
+	void SetIsTarget(bool bTarget);
+	FORCEINLINE const bool& IsTarget() { return bTarget; }
 private:
+	void EndSlowMotion();
 	void Death();
+
 
 private:
 
@@ -56,10 +61,10 @@ private:
 	FName HolsterSocket;
 	UAnimMontage* AttackMontage;
 	UAnimMontage* HittedMontage;
-	bool bAttack = true;
 	bool IsAttack;
-	bool bCanMove = true;
 	bool bDead = false;
+	bool bTarget = false;
 	FTimerHandle DeadTimerHandle;
+	FTimerHandle SlowMotionTimerHandle;
 
 };

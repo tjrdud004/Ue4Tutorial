@@ -7,6 +7,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
+//#include "ActorComponents/CInverseKinematics.h"
+
 UCPlayerAnimInstance::UCPlayerAnimInstance()
 {
 }
@@ -19,6 +21,12 @@ void UCPlayerAnimInstance::NativeBeginPlay()
 
 	if (player == NULL)
 		return;
+
+	UActorComponent* actrorComp = player->GetComponentByClass(UCInverseKinematics::StaticClass());
+	//UActorComponent* actrorComp = player->FindComponentByClass<UCInverseKinematics>();
+	Foot = Cast<UCInverseKinematics>(actrorComp);
+	
+
 }
 
 void UCPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
@@ -40,7 +48,8 @@ void UCPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		return;
 
 	bDrawing = player->IsDrawing();
-	bSheathing = player->IsSheathing();
+	bSheathing = player->IsSheathing(); 
+	bRunning = player->IsRunning();
 
 	FRotator normalRot = player->GetNormalizeRotator();
 	FRotator AimRot = FRotator(Aim_Pitch,Aim_Yaw,0.f);
@@ -53,6 +62,10 @@ void UCPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	Aim_Pitch = AimRot.Pitch;
 	Aim_Yaw = AimRot.Yaw;
+
+	if (Foot == NULL) return;
+	FootIK = Foot->GetIK();
+	
 	
 
 }

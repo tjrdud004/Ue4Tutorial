@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+#include "ActorComponents/CInverseKinematics.h"
 #include "CPlayerAnimInstance.generated.h"
 
 UCLASS()
@@ -29,6 +30,9 @@ protected:
 		bool bSheathing;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		bool bRunning;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		float Aim_Yaw = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -37,6 +41,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		float InterpSpeed = 15.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		FIk FootIK;
+
 public:
 	UCPlayerAnimInstance();
 
@@ -44,7 +51,7 @@ public:
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 private:
-
+	class UCInverseKinematics* Foot;
 
 	
 };

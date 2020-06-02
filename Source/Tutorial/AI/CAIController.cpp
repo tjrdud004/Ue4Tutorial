@@ -51,6 +51,9 @@ void ACAIController::BeginPlay()
 {
 	Super::BeginPlay();
 
+	//Blackboard Default
+	Blackboard->SetValueAsBool("IsAround", true);
+
 	Perception->OnTargetPerceptionUpdated.AddDynamic(this, &ACAIController::OnSensingTarget);
 }
 

@@ -25,6 +25,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		float Direction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		bool bTarget;
+
+
 public:
 	UCEnemyAnimInstance();
 

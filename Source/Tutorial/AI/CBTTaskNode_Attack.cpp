@@ -2,8 +2,9 @@
 #include "CBTTaskNode_Attack.h"
 #include "Enemy/CEnemy.h"
 #include "AI/CAIController.h"
-
-
+#include "Kismet/KismetMathLibrary.h"
+#include "BehaviorTree/BehaviorTreeComponent.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 UCBTTaskNode_Attack::UCBTTaskNode_Attack()
 {
@@ -35,12 +36,16 @@ void UCBTTaskNode_Attack::TickTask(UBehaviorTreeComponent & OwnerComp, uint8 * N
 {
 	Super::TickTask(OwnerComp,NodeMemory,DeltaSeconds);
 
+
+	//지금 이구문이 필요한지 의문 필요없을듯.
 	ACEnemy* enemy = Cast<ACEnemy>(OwnerComp.GetAIOwner()->GetPawn());
 	if (enemy == NULL)
 		return;
 
 	if (IsAttack == false)
 	{
+		bool IsAround = UKismetMathLibrary::RandomBool();
+		OwnerComp.GetBlackboardComponent()->SetValueAsBool("IsAround",IsAround);
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	}
 

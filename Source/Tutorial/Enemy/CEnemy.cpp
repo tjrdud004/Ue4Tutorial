@@ -9,6 +9,7 @@
 #include "TimerManager.h"
 #include "Particles/ParticleSystem.h"	
 #include "Kismet/GameplayStatics.h"
+#include "Engine/LatentActionManager.h"
 
 
 ACEnemy::ACEnemy()
@@ -60,7 +61,6 @@ void ACEnemy::BeginPlay()
 	BlackBlade = GetWorld()->SpawnActor(ACBlackBlade::StaticClass(), &transform, params);
 	BlackBlade->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), Socket);
 
-
 }
 
 void ACEnemy::Tick(float DeltaTime)
@@ -93,12 +93,16 @@ float ACEnemy::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, 
 		FRotator rot = DamageCauser->GetActorRotation();
 		FVector forward = rot.Quaternion().GetForwardVector();
 
+		UGameplayStatics::SetGlobalTimeDilation(GetWorld(),0.1f);
+		GetWorldTimerManager().SetTimer(SlowMotionTimerHandle, this, &ACEnemy::EndSlowMotion, 0.2f, false);
+
 		GetMesh()->SetSimulatePhysics(true);
 		GetMesh()->AddImpulse(forward * GetMesh()->GetMass() * 1000.f);
 		GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		//죽으면 충돌 못지나가게끔하는것.
 		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		
+
 
 		bCanMove = false;
 		bDead = true;
@@ -129,6 +133,16 @@ void ACEnemy::HittedEnd()
 {
 	bCanMove = true;
 	EndAttack();
+}
+
+void ACEnemy::SetIsTarget(bool bTarget)
+{
+	this->bTarget = bTarget;
+}
+
+void ACEnemy::EndSlowMotion()
+{
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.0f);
 }
 
 void ACEnemy::Death()

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "CBaseCharacter.h"
 #include "GenericTeamAgentInterface.h"
 #include "CPlayer.generated.h"
 
@@ -37,7 +37,7 @@ public:
 };
 
 UCLASS()
-class TUTORIAL_API ACPlayer : public ACharacter, public IGenericTeamAgentInterface
+class TUTORIAL_API ACPlayer : public ACBaseCharacter, public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 	
@@ -78,7 +78,7 @@ public:
 	FORCEINLINE bool IsSheathing() { return bSheathing; }
 	FORCEINLINE bool IsCanHitted() { return bCanHitted; }
 	FORCEINLINE bool IsTargeting() { return TargetEnemy == NULL ? false : true; }
-	//FRotator GetCamRotation();
+	FORCEINLINE bool IsRunning() { return bRunning; }
 
 	FRotator GetNormalizeRotator();
 	FORCEINLINE FWeaponDesc& GetCurWeaponDesc() { return WeaponDesc[(int)CurWeaponType]; }
@@ -141,8 +141,7 @@ public:
 
 private:
 
-	bool bAttack = true;
-	bool bCanMove = true;
+	bool bRunning = false;
 	bool bForward;
 	//Montage로 플레이하지.
 	bool bRoll;

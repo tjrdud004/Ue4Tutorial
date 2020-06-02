@@ -373,11 +373,13 @@ void ACPlayer::RotationRoll()
 void ACPlayer::Running()
 {
 	GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
+	bRunning = true;
 }
 
 void ACPlayer::StopRunning()
 {
 	GetCharacterMovement()->MaxWalkSpeed = Speed;
+	bRunning = false;
 }
 
 void ACPlayer::Turn(float Value)

@@ -4,6 +4,7 @@
 #include "CEnemyAnimInstance.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Enemy/CEnemy.h"
 
 UCEnemyAnimInstance::UCEnemyAnimInstance()
 {
@@ -28,6 +29,13 @@ void UCEnemyAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	Speed = character->GetVelocity().Size();
 	Direction = CalculateDirection(character->GetVelocity(),character->GetActorRotation());
+	bInAir = character->GetCharacterMovement()->IsFalling();
+	
+	ACEnemy* enemy = Cast<ACEnemy>(character);
+	if (enemy == NULL)
+		return;
+	
+	bTarget = enemy->IsTarget();
 
 
 }

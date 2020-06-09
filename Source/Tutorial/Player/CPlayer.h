@@ -49,13 +49,12 @@ private:
 		float RunSpeed = 600.0f;
 
 protected:
-	UPROPERTY(VisibleAnywhere)
-		class UCapsuleComponent* TargetCapsule;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		float TargetingLostDistance = 1000.f;
 
-
+protected:
+	UFUNCTION(BlueprintCallable)
+		float GetCurStaminaPercent();
 	
 
 public:
@@ -73,6 +72,7 @@ public:
 	void ResetAttack();
 	void HittedSetting(bool val);
 
+
 	//AnimInstance에서 호출하는 함수들.
 	FORCEINLINE bool IsDrawing() { return bDrawing; }
 	FORCEINLINE bool IsSheathing() { return bSheathing; }
@@ -83,13 +83,15 @@ public:
 	FRotator GetNormalizeRotator();
 	FORCEINLINE FWeaponDesc& GetCurWeaponDesc() { return WeaponDesc[(int)CurWeaponType]; }
 
+	void Running();
+	void StopRunning();
+
 private:
 	//CharacterMovement
 	void MoveForward(float Value);
 	void MoveRight(float Value);
 	//void Jumping();
-	void Running();
-	void StopRunning();
+	
 
 	//CameraMovement
 	void Turn(float Value);
@@ -164,6 +166,8 @@ private:
 private:
 	class USpringArmComponent* SpringArm;
 	class UCameraComponent* MainCamera;
+	class UCStamina* Stamina;
+
 	
 
 private:

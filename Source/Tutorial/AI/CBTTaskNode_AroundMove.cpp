@@ -35,7 +35,6 @@ EBTNodeResult::Type UCBTTaskNode_AroundMove::ExecuteTask(UBehaviorTreeComponent 
 
 
 	ResetAll();
-	enemy->SetIsTarget(true);
 
 	return EBTNodeResult::InProgress;
 }
@@ -52,15 +51,18 @@ void UCBTTaskNode_AroundMove::TickTask(UBehaviorTreeComponent & OwnerComp, uint8
 	{
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 		Timer = 0.f;
+		
 	}
 
 	Timer += DeltaSeconds;
 
 	//Target이 만약에 NULL이 될경우 끝내야함.
 
+	if (enemy->IsCanMove() == true)
+		AroundMove(OwnerComp);
+	else
+		OwnerComp.GetAIOwner()->StopMovement();
 
-	//여기에 움직이는 코드를 넣어줘야겠지
-	AroundMove(OwnerComp);
 	//시간이 다지난경우거나 나머지 추가해줘야할듯.
 	
 
@@ -109,8 +111,17 @@ void UCBTTaskNode_AroundMove::AroundMove(UBehaviorTreeComponent& OwnerComp)
 	FVector controllerRight = UKismetMathLibrary::GetRightVector(controllerRot);
 	FVector controllerForward = UKismetMathLibrary::GetForwardVector(controllerRot);
 
-	FVector Temp = enemy->GetActorLocation() + enemy->GetActorRightVector() * (120.f * Speed);
+	FVector Temp = enemy->GetActorLocation() + enemy->GetActorRightVector() * (100.f * Speed);
 
 	OwnerComp.GetAIOwner()->MoveToLocation(Temp);
+	//나중에 좀더 테스트 해보기.
+	//float dist = target->GetDistanceTo(enemy);
+	//
+	//
+	//if (dist >= MaxDistance)
+	//	enemy->GetCharacterMovement()->MaxWalkSpeed = 400.f;
+	//else
+	//	enemy->GetCharacterMovement()->MaxWalkSpeed = 100.f;
+
 
 }

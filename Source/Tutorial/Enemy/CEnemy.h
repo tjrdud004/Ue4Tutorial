@@ -36,14 +36,14 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
-
+	
 
 public:
 	void BeginAttack();
 	void EndAttack();
 	FOnEndAttackDelegate OnEndAttack;
 	FORCEINLINE bool IsCanMove() { return bCanMove; }
-
+	void HittedBegin();
 	void HittedEnd();
 
 	FORCEINLINE class AActor* GetWeapon() { return BlackBlade; }

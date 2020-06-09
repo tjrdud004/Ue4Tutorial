@@ -12,9 +12,18 @@
 #include "Camera/CameraComponent.h"
 #include "Engine.h"
 
+
 #include "Weapon/CWeapon.h"
 #include "Enemy/CEnemy.h"
 #include "Camera/CSkillCameraShake.h"
+#include "ActorComponents/CStamina.h"
+
+
+//BlueprintCall
+float ACPlayer::GetCurStaminaPercent()
+{
+	return Stamina->GetCurStaminaPercent();
+}
 
 ACPlayer::ACPlayer()
 {
@@ -26,6 +35,11 @@ ACPlayer::ACPlayer()
 
 	FString path;
 	
+
+	//ActorComponent
+	{
+
+	}
 	
 	//Roll
 	{
@@ -105,8 +119,6 @@ ACPlayer::ACPlayer()
 		if (BurstSkill.Succeeded())
 			desc.SkillMontages[(int)ESkillType::Burst] = BurstSkill.Object;
 	}
-
-	
 }
 
 bool ACPlayer::IsKeyDownCheck(FKey key)
@@ -240,6 +252,7 @@ void ACPlayer::BeginPlay()
 
 	SpringArm = Cast<USpringArmComponent>(GetComponentByClass(USpringArmComponent::StaticClass()));
 	MainCamera = Cast<UCameraComponent>(GetComponentByClass(UCameraComponent::StaticClass()));
+	Stamina = Cast<UCStamina>(GetComponentByClass(UCStamina::StaticClass()));
 
 }
 
@@ -259,11 +272,12 @@ void ACPlayer::Tick(float DeltaTime)
 		rot = UKismetMathLibrary::RInterpTo(ActorRot, rot, DeltaTime, 5.f);
 
 		SetActorRotation(rot);
+		
 
 		//이렇게 두면 정상적으로 작동은 하겠지만 애매함...
 		if (LostTargetDistance() == true)
 		{
-			SetTargetEnemy(NULL, true);
+			SetTargetEnemy(NULL, true);	
 		}
 	}
 }
@@ -348,18 +362,21 @@ void ACPlayer::RotationRoll()
 			return;
 
 	if (bCanMove == false) return;
+	if (Stamina->DecreaseStamina(20.f) == false) return;
+
 
 	//Notify에서 설정해줌.
 	bCanMove = false;
 	bAttack = false;
 
-	
+
 	if(IsKeyDownCheck(EKeys::A) || IsKeyDownCheck(EKeys::S) || IsKeyDownCheck(EKeys::D) || IsKeyDownCheck(EKeys::W))
 	{
 		bRoll = true;
 		bRolling = true;
 		RotationKey();
-		PlayAnimMontage(RollMontage);
+		PlayAnimMontage(RollMontage,1.2f);
+		
 	}
 	else
 	{
@@ -374,12 +391,17 @@ void ACPlayer::Running()
 {
 	GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
 	bRunning = true;
+	Stamina->SetTimerHandle(true);
 }
 
 void ACPlayer::StopRunning()
 {
+	if (bRunning == false)
+		return;
+
 	GetCharacterMovement()->MaxWalkSpeed = Speed;
 	bRunning = false;
+	Stamina->SetTimerHandle(false);
 }
 
 void ACPlayer::Turn(float Value)
@@ -453,14 +475,14 @@ void ACPlayer::Attack()
 
 	if (desc.AttackMontages.Num() <= 0) return;
 
-	if (bAttacking == false)
+	if (bAttacking == false && Stamina->DecreaseStamina(20))
 	{
 		PlayAnimMontage(desc.AttackMontages[ComboCount]);
 		ComboCount++;
 		bAttacking = true;
 		bCanMove = false;
 	}
-	else if(bComboCheck == true)
+	else if(bComboCheck == true && Stamina->DecreaseStamina(20))
 	{
 		PlayAnimMontage(desc.AttackMontages[ComboCount]);
 
@@ -590,7 +612,7 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	//Attack
 	PlayerInputComponent->BindAction("Attack", EInputEvent::IE_Pressed, this, &ACPlayer::Attack);
-
+	
 	//Parry
 	PlayerInputComponent->BindAction("Parry", EInputEvent::IE_Pressed, this, &ACPlayer::Parry);
 
@@ -620,7 +642,6 @@ float ACPlayer::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent,
 
 	APlayerCameraManager* camManager = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
 	camManager->PlayCameraShake(UCSkillCameraShake::StaticClass(), 0.2f);
-
 	return 0.0f;
 }
 

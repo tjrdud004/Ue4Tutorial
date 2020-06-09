@@ -78,9 +78,10 @@ float ACEnemy::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, 
 	float damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	Health -= damage;
-	UGameplayStatics::SpawnEmitterAttached(Particle,GetMesh(),"spine_01",
-		FVector(0,0,0),FRotator(0,0,0),EAttachLocation::KeepRelativeOffset,true);
+	//UGameplayStatics::SpawnEmitterAttached(Particle,GetMesh(),"spine_01",
+	//	FVector(0,0,0),FRotator(0,0,0),EAttachLocation::KeepRelativeOffset,true);
 
+	bCanMove = false;
 
 	if (Health > 0.f)
 	{
@@ -127,6 +128,11 @@ void ACEnemy::EndAttack()
 	{
 		OnEndAttack.Broadcast();
 	}
+}
+
+void ACEnemy::HittedBegin()
+{
+	bCanMove = false;
 }
 
 void ACEnemy::HittedEnd()

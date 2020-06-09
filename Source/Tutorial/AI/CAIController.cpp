@@ -74,23 +74,29 @@ void ACAIController::OnUnPossess()
 
 void ACAIController::OnSensingTarget(AActor * Actor, FAIStimulus Stimulus)
 {
+	ACEnemy* enemy = Cast<ACEnemy>(GetPawn());
+
 	if (Stimulus.WasSuccessfullySensed())
 	{
 		Blackboard->SetValueAsObject("Target", Actor);
 		//이부분이 문제임.
-
-		if (GetPawn() != NULL)
+		
+		if (enemy != NULL)
 		{
-			Cast<ACEnemy>(GetPawn())->GetCharacterMovement()->MaxWalkSpeed = 550.0f;
+
+			enemy->GetCharacterMovement()->MaxWalkSpeed = 600.f;
+			enemy->SetIsTarget(true);
+			//->SetIsTarget(true);
+
 		}
 
 	}
 	else
 	{
 		Blackboard->SetValueAsObject("Target", NULL);
-		if (GetPawn() != NULL)
+		if (enemy != NULL)
 		{
-			Cast<ACEnemy>(GetPawn())->GetCharacterMovement()->MaxWalkSpeed = 300.0f;
-		}
+			enemy->GetCharacterMovement()->MaxWalkSpeed = 250.f;
+		}	enemy->SetIsTarget(false);
 	}
 }

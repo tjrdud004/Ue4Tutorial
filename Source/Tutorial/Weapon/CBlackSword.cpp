@@ -48,6 +48,9 @@ void ACBlackSword::OnBeginOverlap(UPrimitiveComponent * OverlappedComponent, AAc
 	ACEnemy* enemy = Cast<ACEnemy>(OtherActor);
 	if (enemy != NULL)
 	{
+		//아직 사용법을 잘모르겠음.
+		//UGameplayStatics::ApplyPointDamage(OtherActor,Damage, SweepResult.ImpactNormal,SweepResult,NULL,GetOwner(),NULL);
+		
 		UGameplayStatics::ApplyDamage(OtherActor, Damage ,NULL,GetOwner(),NULL);
 
 	}
